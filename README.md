@@ -1,44 +1,89 @@
-Student Grade Management System
+smart_traffic_analyzer/main.py
 
-import json
+from traffic_simulation import TrafficSimulator from traffic_light_controller import TrafficLightController
 
-File to store student data
+def main(): controller = TrafficLightController() simulator = TrafficSimulator(controller)
 
-data_file = "students.json"
+print("Starting Smart Traffic Flow Analyzer...")
+simulator.run_simulation()
 
-def load_data(): try: with open(data_file, "r") as f: return json.load(f) except FileNotFoundError: return []
+if name == "main": main()
 
-def save_data(data): with open(data_file, "w") as f: json.dump(data, f, indent=4)
+smart_traffic_analyzer/traffic_simulation.py
 
-def calculate_grade(avg): if avg >= 90: return 'A+' elif avg >= 75: return 'A' elif avg >= 60: return 'B' elif avg >= 50: return 'C' else: return 'F'
+import time import random
 
-def add_student(): student = {} student['name'] = input("Enter name: ") student['roll'] = input("Enter roll number: ") marks = [] for i in range(3): mark = float(input(f"Enter marks for subject {i+1}: ")) marks.append(mark) student['marks'] = marks student['total'] = sum(marks) student['average'] = student['total'] / 3 student['grade'] = calculate_grade(student['average']) data = load_data() data.append(student) save_data(data) print("Student added successfully!\n")
+class TrafficSimulator: def init(self, controller): self.controller = controller self.lanes = ["North", "South", "East", "West"]
 
-def view_students(): data = load_data() if not data: print("No student records found.\n") return for student in data: print("-------------------------------") print(f"Name: {student['name']}") print(f"Roll No: {student['roll']}") print(f"Marks: {student['marks']}") print(f"Total: {student['total']}") print(f"Average: {student['average']:.2f}") print(f"Grade: {student['grade']}") print("-------------------------------\n")
+def run_simulation(self, cycles=5):
+    for _ in range(cycles):
+        traffic_data = {
+            lane: random.randint(0, 10) for lane in self.lanes
+        }
+        print(f"\nTraffic data: {traffic_data}")
+        next_green = self.controller.decide_next_light(traffic_data)
+        self.display_signal(next_green)
+        time.sleep(2)
 
-def search_student(): roll = input("Enter roll number to search: ") data = load_data() for student in data: if student['roll'] == roll: print(f"Found student: {student['name']}, Grade: {student['grade']}\n") return print("Student not found.\n")
+def display_signal(self, green_lane):
+    print(f"\n--- GREEN LIGHT: {green_lane.upper()} ---")
+    for lane in self.lanes:
+        if lane != green_lane:
+            print(f"{lane}: RED")
+    print(f"{green_lane}: GREEN")
 
-def update_student(): roll = input("Enter roll number to update: ") data = load_data() for student in data: if student['roll'] == roll: print(f"Updating student: {student['name']}") student['name'] = input("Enter new name: ") or student['name'] marks = [] for i in range(3): mark = input(f"Enter new mark for subject {i+1} (or press Enter to keep old): ") if mark: marks.append(float(mark)) else: marks.append(student['marks'][i]) student['marks'] = marks student['total'] = sum(marks) student['average'] = student['total'] / 3 student['grade'] = calculate_grade(student['average']) save_data(data) print("Student record updated.\n") return print("Student not found.\n")
+smart_traffic_analyzer/traffic_light_controller.py
 
-def delete_student(): roll = input("Enter roll number to delete: ") data = load_data() new_data = [s for s in data if s['roll'] != roll] if len(data) == len(new_data): print("Student not found.\n") else: save_data(new_data) print("Student record deleted.\n")
+class TrafficLightController: def decide_next_light(self, traffic_data): # Choose the lane with highest vehicle count return max(traffic_data, key=traffic_data.get)
 
-def menu(): while True: print("===== Student Grade Management System =====") print("1. Add Student") print("2. View All Students") print("3. Search Student") print("4. Update Student") print("5. Delete Student") print("6. Exit") choice = input("Enter your choice (1-6): ")
+smart_traffic_analyzer/README.md
 
-if choice == '1':
-        add_student()
-    elif choice == '2':
-        view_students()
-    elif choice == '3':
-        search_student()
-    elif choice == '4':
-        update_student()
-    elif choice == '5':
-        delete_student()
-    elif choice == '6':
-        print("Exiting... Goodbye!")
-        break
-    else:
-        print("Invalid choice. Please try again.\n")
+Smart Traffic Flow Analyzer 🚦
 
-if name == "main": menu()
+A Python-based simulation of a smart traffic light system that dynamically adjusts based on simulated traffic density.
+
+Features
+
+Randomized traffic generation for 4-way intersection
+
+Smart traffic light control based on density
+
+CLI-based simulation output
+
+Easy to extend with GUI or ML models
+
+
+Getting Started
+
+git clone https://github.com/yourusername/smart-traffic-analyzer.git
+cd smart-traffic-analyzer
+python main.py
+
+Future Enhancements
+
+GUI using Tkinter or Pygame
+
+Real-time video integration with OpenCV
+
+Machine Learning model for prediction
+
+
+
+---
+
+Feel free to fork and improve!
+
+smart_traffic_analyzer/requirements.txt
+
+No external libraries required (uses standard Python libraries)
+
+Optional for future use:
+
+opencv-python
+
+numpy
+
+pygame
+
+scikit-learn
 
